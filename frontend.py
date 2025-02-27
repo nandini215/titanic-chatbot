@@ -1,33 +1,26 @@
 import streamlit as st
 import requests
-import base64
-from PIL import Image
-from io import BytesIO
 
-# FastAPI backend URL
-BACKEND_URL = "http://127.0.0.1:9000"
-
+# Define backend API URL
+BACKEND_URL = "http://your-backend-url.com"  # Replace with actual backend URL
 
 st.title("Titanic Chatbot")
+st.write("Ask a question about the Titanic dataset:")
 
-query = st.text_input("Ask a question about the Titanic dataset:")
+# Input field for user query
+query = st.text_input("Enter your question:", "")
 
 if st.button("Get Answer"):
-    if query:
-      response = requests.get(f"{BACKEND_URL}/predict", params={"query": query})
-        
-        if response.status_code == 200:
-            result = response.json()
-
-            if "answer" in result:
-                st.write("### Answer:", result["answer"])
+    if query.strip():  # Ensure the query is not empty
+        try:
+            response = requests.get(f"{BACKEND_URL}/predict", params={"query": query})
             
-            if "image" in result:
-                image_data = base64.b64decode(result["image"])
-                image = Image.open(BytesIO(image_data))
-                st.image(image, caption="Generated Visualization")
-
-        else:
-            st.error("Error fetching response from the backend.")
+            if response.status_code == 200:
+                st.write("### Answer:")
+                st.write(response.json()["answer"])  # Adjust based on API response format
+            else:
+                st.error("Error: Unable to fetch data. Please try again.")
+        except requests.exceptions.RequestException as e:
+            st.error(f"Connection error: {e}")
     else:
-        st.warning("Please enter a question.")
+        st.warning("Please enter a valid question before submitting.")
