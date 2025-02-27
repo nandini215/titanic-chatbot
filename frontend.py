@@ -14,7 +14,7 @@ query = st.text_input("Ask a question about the Titanic dataset:")
 
 if st.button("Get Answer"):
     if query:
-        response = requests.get(f"{BACKEND_URL}/predict", params={"query": query})
+      response = requests.get(f"{BACKEND_URL}/predict", params={"query": query})
         
         if response.status_code == 200:
             result = response.json()
